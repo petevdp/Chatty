@@ -1,4 +1,4 @@
-const generateRandomId = (alphabet => {
+export const generateRandomId = (alphabet => {
   const alphabetLength = alphabet.length;
   const randoIter = (key, n) => {
     if (n === 0) {
@@ -11,8 +11,11 @@ const generateRandomId = (alphabet => {
   return () => randoIter('', 10);
 })('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
+const addRandomId = msg => ({
+  ...msg,
+  id: generateRandomId()
+})
+
 export const addRandomIdToMsgs = messages => (
-  messages.map(msg => (
-    { ...msg, id: generateRandomId() }
-  ))
+  messages.map(addRandomId)
 );
