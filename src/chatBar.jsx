@@ -26,14 +26,15 @@ export default class ChatBar extends Component {
   };
 
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, onUpdateUser } = this.props;
     const { newMessage } = this.state;
     return (
       <footer className="chatbar">
         <input
           className="chatbar-username"
           placeholder="Your Name (Optional)"
-          defaultValue={currentUser}
+          onChange={onUpdateUser}
+          value={currentUser}
         />
         <input
           className="chatbar-message"

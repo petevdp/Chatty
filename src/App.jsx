@@ -32,6 +32,10 @@ class App extends Component {
     }, 3000);
   }
 
+  onUpdateuser = evt => {
+    this.setState({ currentUser: evt.target.value });
+  };
+
   onNewMessage = newMessage => {
     this.setState(() => ({
       messages: [...this.state.messages, newMessage]
@@ -44,7 +48,11 @@ class App extends Component {
       <div>
         <NavBar />
         <MessageList messages={messages} />
-        <ChatBar currentUser={currentUser} onNewMessage={this.onNewMessage} />
+        <ChatBar
+          currentUser={currentUser}
+          onNewMessage={this.onNewMessage}
+          onUpdateUser={this.onUpdateuser}
+        />
       </div>
     );
   }
