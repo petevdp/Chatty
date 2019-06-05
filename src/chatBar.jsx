@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { generateRandomId } from "./utils/data-helpers";
 export default class ChatBar extends Component {
   constructor(props) {
     super(props);
@@ -11,15 +10,13 @@ export default class ChatBar extends Component {
   };
 
   onKeyPress = evt => {
-    const isEnter = key => key === "Enter";
-    if (isEnter(evt.key)) {
+    if (evt.key === "Enter") {
       const { currentUser, onNewMessage } = this.props;
       const { newMessage } = this.state;
       onNewMessage({
         username: currentUser,
         type: "postedMessage",
-        content: newMessage,
-        id: generateRandomId()
+        content: newMessage
       });
       this.setState({ newMessage: "" });
     }

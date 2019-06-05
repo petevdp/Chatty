@@ -4,42 +4,43 @@ import MessageList from "./messages.jsx";
 import ChatBar from "./chatBar.jsx";
 import NavBar from "./navBar.jsx";
 
-import { addRandomIdToMsgs } from "./utils/data-helpers";
-import sampleMessages from "./sampleMessages";
-
-const messages = addRandomIdToMsgs(sampleMessages);
-
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { messages, currentUser: "bob" };
+    this.socket = new WebSocket("ws:localhost:3001");
+    this.state = { messages: [], currentUser: "bob" };
   }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {
-        id: 3,
-        username: "Michelle",
-        content: "Hello there!"
-      };
-      const messages = this.state.messages.concat(newMessage);
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({ messages: messages });
-    }, 3000);
+    const socket = new WebSocket("ws:localhost:3001");
+    this.socket = socket;
+
+    console.log("socket: ", socket);
+    socket.onopen = event => {
+      // socket.send("hello socket");
+    };
+    socket.onmessage = event => {
+      const { messages } = JSON.parse(event.data);
+      console.log("recieved message");
+      console.log(event.data);
+      if (messages) {
+        console.log("we gucci");
+        this.setState({ messages });
+        return;
+      }
+      console.log("hmm");
+    };
   }
 
-  onUpdateuser = evt => {
-    this.setState({ currentUser: evt.target.value });
+  onUpdateUser = event => {
+    this.setState({ currentUser: event.target.value });
   };
 
   onNewMessage = newMessage => {
-    this.setState(() => ({
-      messages: [...this.state.messages, newMessage]
-    }));
+    const { messages } = this.state;
+    console.log("sending: ", messages);
+    this.socket.send(JSON.stringify({ messages, newMessage }));
   };
 
   render() {
@@ -51,7 +52,7 @@ class App extends Component {
         <ChatBar
           currentUser={currentUser}
           onNewMessage={this.onNewMessage}
-          onUpdateUser={this.onUpdateuser}
+          onUpdateUser={this.onUpdateUser}
         />
       </div>
     );
