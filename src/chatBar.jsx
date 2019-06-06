@@ -11,12 +11,9 @@ export default class ChatBar extends Component {
 
   onKeyPress = evt => {
     if (evt.key === "Enter") {
-      const { user, onNewMessage } = this.props;
+      const { onMessageSubmit } = this.props;
       const { newMessage } = this.state;
-      onNewMessage({
-        username: user,
-        content: newMessage
-      });
+      onMessageSubmit(newMessage);
       this.setState({ newMessage: "" });
     }
   };

@@ -9,7 +9,11 @@ class App extends Component {
     super(props);
     const { defaultUser } = this.props;
     this.socket = null;
-    this.state = { messages: [], currentUser: defaultUser };
+    this.state = {
+      messages: [],
+      currentUser: defaultUser,
+      savedUser: defaultUser
+    };
   }
 
   sendRequest(updates) {
@@ -46,27 +50,31 @@ class App extends Component {
     };
   }
   onUpdateUser = event => {
-    const newUser = event.target.value;
-    this.setState({ newUser });
+    const currentUser = event.target.value;
+    this.setState({ currentUser });
   };
 
-  onNewMessage = message => {
-    const { currentUser, newUser } = this.state;
-    const userUpdate = { currentUser, newUser };
-    this.setState({ currentUser: newUser, newUser: "" });
+  onMessageSubmit = content => {
+    const { currentUser, savedUser } = this.state;
+    if (savedUser !== currentUser) {
+      const userUpdate = { oldUser: savedUser, newUser: currentUser };
+      this.sendRequest({ requestType: "userUpdate", userUpdate });
+      this.setState({ savedUser: currentUser });
+    }
+    const message = { username: currentUser, content };
     this.sendRequest({ requestType: "newMessage", message });
   };
 
   render() {
-    const { messages, newUser, currentUser } = this.state;
-    console.log("newUser: ", newUser);
+    const { messages, currentUser } = this.state;
+    console.log("currentUser: ", currentUser);
     return (
       <div>
         <NavBar />
         <MessageList messages={messages} />
         <ChatBar
-          user={newUser || currentUser}
-          onNewMessage={this.onNewMessage}
+          user={currentUser}
+          onMessageSubmit={this.onMessageSubmit}
           onUpdateUser={this.onUpdateUser}
         />
       </div>
