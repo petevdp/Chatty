@@ -11,11 +11,10 @@ export default class ChatBar extends Component {
 
   onKeyPress = evt => {
     if (evt.key === "Enter") {
-      const { currentUser, onNewMessage } = this.props;
+      const { user, onNewMessage } = this.props;
       const { newMessage } = this.state;
       onNewMessage({
-        username: currentUser,
-        type: "postedMessage",
+        username: user,
         content: newMessage
       });
       this.setState({ newMessage: "" });
@@ -23,7 +22,7 @@ export default class ChatBar extends Component {
   };
 
   render() {
-    const { currentUser, onUpdateUser } = this.props;
+    const { user, onUpdateUser } = this.props;
     const { newMessage } = this.state;
     return (
       <footer className="chatbar">
@@ -31,7 +30,7 @@ export default class ChatBar extends Component {
           className="chatbar-username"
           placeholder="Your Name (Optional)"
           onChange={onUpdateUser}
-          value={currentUser}
+          value={user}
         />
         <input
           className="chatbar-message"

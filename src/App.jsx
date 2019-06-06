@@ -7,8 +7,14 @@ import NavBar from "./navBar.jsx";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.socket = new WebSocket("ws:localhost:3001");
-    this.state = { messages: [], currentUser: "bob" };
+    const { defaultUser } = this.props;
+    this.socket = null;
+    this.state = { messages: [], currentUser: defaultUser };
+  }
+
+  sendRequest(updates) {
+    console.log("updates: ", updates);
+    this.socket.send(JSON.stringify(updates));
   }
 
   componentDidMount() {
@@ -17,40 +23,49 @@ class App extends Component {
     this.socket = socket;
 
     console.log("socket: ", socket);
+
     socket.onopen = event => {
-      // socket.send("hello socket");
+      this.sendRequest({
+        requestType: "updateClient",
+        user: this.state.savedUser
+      });
+      this.sendRequest({
+        requestType: "registerClient",
+        user: this.state.savedUser
+      });
     };
+
     socket.onmessage = event => {
-      const { messages } = JSON.parse(event.data);
-      console.log("recieved message");
-      console.log(event.data);
-      if (messages) {
-        console.log("we gucci");
-        this.setState({ messages });
+      const { chatEvents } = JSON.parse(event.data);
+      console.log("recieved message: ", chatEvents);
+      if (chatEvents) {
+        this.setState({ messages: chatEvents });
         return;
       }
-      console.log("hmm");
+      console.log("no chatEvents!");
     };
   }
-
   onUpdateUser = event => {
-    this.setState({ currentUser: event.target.value });
+    const newUser = event.target.value;
+    this.setState({ newUser });
   };
 
-  onNewMessage = newMessage => {
-    const { messages } = this.state;
-    console.log("sending: ", messages);
-    this.socket.send(JSON.stringify({ messages, newMessage }));
+  onNewMessage = message => {
+    const { currentUser, newUser } = this.state;
+    const userUpdate = { currentUser, newUser };
+    this.setState({ currentUser: newUser, newUser: "" });
+    this.sendRequest({ requestType: "newMessage", message });
   };
 
   render() {
-    const { messages, currentUser } = this.state;
+    const { messages, newUser, currentUser } = this.state;
+    console.log("newUser: ", newUser);
     return (
       <div>
         <NavBar />
         <MessageList messages={messages} />
         <ChatBar
-          currentUser={currentUser}
+          user={newUser || currentUser}
           onNewMessage={this.onNewMessage}
           onUpdateUser={this.onUpdateUser}
         />
