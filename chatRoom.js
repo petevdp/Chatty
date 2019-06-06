@@ -23,10 +23,19 @@ class ChatRoom {
     })
   }
 
-  _updateClientsChatEvents = () => {
+  _getUserList = () => (
+    this._chatClients.map(({
+      ws,
+      ...rest
+    }) => rest)
+  )
+
+  _updateClientsEventsAndUsers = () => {
     this._updateClients(username => ({
-      chatEvents: this._getChatEventsWithDirection(username)
+      chatEvents: this._getChatEventsWithDirection(username),
+      users: this._getUserList(),
     }));
+    console.log('userList: ', this._getUserList());
   }
 
   _addNewChatEvent(newChatEvent) {
@@ -38,7 +47,7 @@ class ChatRoom {
         id: uuidv4(),
       },
     ]
-    this._updateClientsChatEvents()
+    this._updateClientsEventsAndUsers()
   }
 
   _addNewMessage = message => {
