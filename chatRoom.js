@@ -92,14 +92,22 @@ class ChatRoom {
       username,
       id: uuidv4(),
     })
+    this._addNewChatEvent({
+      content: `${username} has joined the chat`,
+      type: 'notification',
+    })
     console.log('chatClients: ', this._chatClients);
   }
 
   _deleteChatClient = (ws) => {
     const clients = this._chatClients;
     const clientIndex = clients.findIndex(client => client.ws === ws)
-    console.log('deleted ', clients[clientIndex].username);
+    const username = clients[clientIndex].username;
     clients.splice(clientIndex, 1);
+    this._addNewChatEvent({
+      content: `${username} has left the chat`,
+      type: 'notification',
+    });
   }
 
   _handleSocketMessage = (ws, dataString) => {
