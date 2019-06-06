@@ -31,11 +31,11 @@ class App extends Component {
     socket.onopen = event => {
       this.sendRequest({
         requestType: "updateClient",
-        user: this.state.savedUser
+        username: this.state.savedUser
       });
       this.sendRequest({
         requestType: "registerClient",
-        user: this.state.savedUser
+        username: this.state.savedUser
       });
     };
 
