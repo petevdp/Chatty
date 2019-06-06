@@ -12,6 +12,10 @@ class ChatRoom {
     this._chatEvents = chatEvents;
   }
 
+  _updateClient = (ws, username) => {
+    ws.send(JSON.stringify(this._getUserContextState(username)));
+  }
+
   _updateClients() {
     this._chatClients.forEach(userClient => {
       const {
@@ -19,11 +23,12 @@ class ChatRoom {
         username
       } = userClient;
       if (ws.readyState === WebSocket.OPEN) {
-        console.log(`sending to ${username}`)
-        ws.send(JSON.stringify(this._updateClientState(username)))
+        console.log(`sending to ${username}`);
+        this._updateClient(ws, username);
       }
     })
-  };
+  }
+
   _getUserList = () => (
     this._chatClients.map(({
       ws,
@@ -31,7 +36,7 @@ class ChatRoom {
     }) => rest)
   )
 
-  _updateClientState = username => ({
+  _getUserContextState = username => ({
     chatEvents: this._getChatEventsWithDirection(username),
     userList: this._getUserList(),
   });
@@ -86,11 +91,7 @@ class ChatRoom {
   }
 
   _updateUserSocket = (ws, username) => {
-    const events = this._getChatEventsWithDirection(username)
-    console.log('event:', events[0])
-    ws.send(JSON.stringify({
-      chatEvents: events
-    }));
+    this._getUserContextState(username)
   }
 
   _addChatClient = (ws, username) => {
@@ -139,7 +140,7 @@ class ChatRoom {
       const {
         username
       } = data;
-      this._updateUserSocket(ws, username);
+      this._updateClient(ws, username);
     }
 
     if (requestType === 'newMessage') {
