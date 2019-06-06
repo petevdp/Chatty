@@ -10,15 +10,23 @@ class ChatRoom {
     this._chatEvents = chatEvents;
   }
 
-  _updateClients() {
-    this._wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        console.log('sending')
-        client.send(JSON.stringify({
-          chatEvents: this._chatEvents
-        }))
+  _updateClients(updater) {
+    this._chatClients.forEach(userClient => {
+      const {
+        ws,
+        username
+      } = userClient;
+      if (ws.readyState === WebSocket.OPEN) {
+        console.log(`sending to ${username}`)
+        ws.send(JSON.stringify(updater(username)))
       }
     })
+  }
+
+  _updateClientsChatEvents = () => {
+    this._updateClients(username => ({
+      chatEvents: this._getChatEventsWithDirection(username)
+    }));
   }
 
   _addNewChatEvent(newChatEvent) {
@@ -30,7 +38,7 @@ class ChatRoom {
         id: uuidv4(),
       },
     ]
-    this._updateClients()
+    this._updateClientsChatEvents()
   }
 
   _addNewMessage = message => {
@@ -43,37 +51,55 @@ class ChatRoom {
   _addUserUpdate = userUpdate => {
     const {
       oldUser,
-      newUser
+      newUser,
     } = userUpdate
     const event = {
       content: `${oldUser} changed their name to ${newUser}`,
-      type: 'notification'
+      type: 'notification',
+      username: newUser,
     }
     this._addNewChatEvent(event)
   }
 
-  _getChatEventsWithDirection = clientUsername => (
-    this._chatEvents.map(event => ({
-      ...event,
-      direction: (
-        event.username === clientUsername ?
+  _getChatEventsWithDirection = clientUsername => {
+    if (!clientUsername) {
+      console.warn('needs client username');
+    }
+    return this._chatEvents.map(event => {
+      const direction = (
+        event.username && event.username === clientUsername ?
         'outgoing' :
         'incoming'
-      ),
-    }))
-  )
-
-  _updateUserSocket = (ws, username) => {
-    ws.send({
-      chatEvents: this._addDirections(username),
+      )
+      return {
+        ...event,
+        direction,
+      }
     })
   }
 
-  _addchatClient = (ws, username) => {
+  _updateUserSocket = (ws, username) => {
+    const events = this._getChatEventsWithDirection(username)
+    console.log('event:', events[0])
+    ws.send(JSON.stringify({
+      chatEvents: events
+    }));
+  }
+
+  _addChatClient = (ws, username) => {
     this._chatClients.push({
       ws,
       username,
+      id: uuidv4(),
     })
+    console.log('chatClients: ', this._chatClients);
+  }
+
+  _deleteChatClient = (ws) => {
+    const clients = this._chatClients;
+    const clientIndex = clients.findIndex(client => client.ws === ws)
+    console.log('deleted ', clients[clientIndex].username);
+    clients.splice(clientIndex, 1);
   }
 
   _handleSocketMessage = (ws, dataString) => {
@@ -85,18 +111,19 @@ class ChatRoom {
     console.log('requestType: ', requestType);
     console.log('data: ', data);
 
-    if (requestType === 'register') {
+    if (requestType === 'registerClient') {
       const {
         username
       } = data;
-      this._addchatClient(ws, username);
+      console.log(`adding chat client ${username}`)
+      this._addChatClient(ws, username);
     }
 
-    if (requestType === 'getEvents') {
+    if (requestType === 'updateClient') {
       const {
         username
       } = data;
-      this._updateUser(ws, username);
+      this._updateUserSocket(ws, username);
     }
 
     if (requestType === 'newMessage') {
@@ -107,17 +134,29 @@ class ChatRoom {
       this._addNewMessage(message)
     }
 
-    if (requestType === 'updateUser') {
+    if (requestType === 'userUpdate') {
       const {
         userUpdate
       } = data;
-      this._addUserUpdate(userUpdate);
+      this._updateUsername(userUpdate);
     }
   }
+
+  _updateUsername(userUpdate) {
+    this._addUserUpdate(userUpdate)
+    const clients = this._chatClients;
+    const clientIndex = clients.findIndex(client => (
+      userUpdate.username === client.oldUser
+    ))
+    clients[clientIndex].username = userUpdate.newUser;
+    console.log('new username: ', clients[clientIndex].username);
+  }
+
 
   _initConnection = () => {
     this._wss.on('connection', this._onConnect)
   }
+
 
   _onConnect = ws => {
     console.log('Client connected');
@@ -126,7 +165,7 @@ class ChatRoom {
     }));
 
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-    ws.on('close', () => console.log('Client disconnected'));
+    ws.on('close', () => this._deleteChatClient(ws));
     ws.on('message', (data) => this._handleSocketMessage(ws, data));
   }
 }
