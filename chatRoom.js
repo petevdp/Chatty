@@ -10,7 +10,7 @@ class ChatRoom {
     this._chatEvents = chatEvents;
   }
 
-  _updateClients(updater) {
+  _updateClients() {
     this._chatClients.forEach(userClient => {
       const {
         ws,
@@ -18,11 +18,10 @@ class ChatRoom {
       } = userClient;
       if (ws.readyState === WebSocket.OPEN) {
         console.log(`sending to ${username}`)
-        ws.send(JSON.stringify(updater(username)))
+        ws.send(JSON.stringify(this._updateClientState(username)))
       }
     })
-  }
-
+  };
   _getUserList = () => (
     this._chatClients.map(({
       ws,
@@ -30,13 +29,10 @@ class ChatRoom {
     }) => rest)
   )
 
-  _updateClientsEventsAndUsers = () => {
-    this._updateClients(username => ({
-      chatEvents: this._getChatEventsWithDirection(username),
-      users: this._getUserList(),
-    }));
-    console.log('userList: ', this._getUserList());
-  }
+  _updateClientState = username => ({
+    chatEvents: this._getChatEventsWithDirection(username),
+    userList: this._getUserList(),
+  });
 
   _addNewChatEvent(newChatEvent) {
     console.log('newChatEvent: ', newChatEvent);
@@ -47,7 +43,7 @@ class ChatRoom {
         id: uuidv4(),
       },
     ]
-    this._updateClientsEventsAndUsers()
+    this._updateClients();
   }
 
   _addNewMessage = message => {
