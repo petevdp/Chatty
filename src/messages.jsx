@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 const Message = props => {
-  const { content, type, username } = props;
+  const { content, username } = props;
   return (
     <div className="message">
       <span className="message-username">{username}</span>
@@ -9,18 +9,29 @@ const Message = props => {
     </div>
   );
 };
-export default class MessageList extends Component {
+
+const Notification = ({ content }) => (
+  <div className="message system">{content}</div>
+);
+
+export default class ChatEventList extends Component {
   render() {
     const { messages } = this.props;
-    return (
-      <main className="message-list">
-        {messages.map(msg => (
-          <Message key={msg.id} {...msg} />
-        ))}
-        <div className="message system">
-          Anonymous1 changed their name to nomnom.
-        </div>
-      </main>
-    );
+
+    const chatEventElements = messages.map(event => {
+      const { type } = event;
+      console.log("type: ", type);
+      console.log("event: ", event);
+      const key = event.id;
+      if (type === "message") {
+        return <Message key={key} {...event} />;
+      }
+      if (type === "notification") {
+        return <Notification key={key} {...event} />;
+      }
+      throw `unknown event ${type}`;
+    });
+
+    return <main className="message-list">{chatEventElements}</main>;
   }
 }

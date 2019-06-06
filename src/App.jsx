@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import MessageList from "./messages.jsx";
+import ChatEventList from "./messages.jsx";
 import ChatBar from "./chatBar.jsx";
 import NavBar from "./navBar.jsx";
 
@@ -68,10 +68,11 @@ class App extends Component {
   render() {
     const { messages, currentUser } = this.state;
     console.log("currentUser: ", currentUser);
+    console.log("messages: ", messages);
     return (
       <div>
         <NavBar />
-        <MessageList messages={messages} />
+        <ChatEventList messages={messages} />
         <ChatBar
           user={currentUser}
           onMessageSubmit={this.onMessageSubmit}
