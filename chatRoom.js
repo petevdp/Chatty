@@ -1,6 +1,8 @@
 const WebSocket = require('ws');
 const uuidv4 = require('uuid/v4');
-
+const {
+  getRandomColor
+} = require('./data-helpers')
 class ChatRoom {
   constructor(wss, chatEvents = []) {
     this._wss = wss;
@@ -96,6 +98,7 @@ class ChatRoom {
       ws,
       username,
       id: uuidv4(),
+      color: getRandomColor(),
     })
     this._addNewChatEvent({
       content: `${username} has joined the chat`,
