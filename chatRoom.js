@@ -1,7 +1,8 @@
 const WebSocket = require('ws');
 const uuidv4 = require('uuid/v4');
 const {
-  getRandomColor
+  getRandomColor,
+  generateRandomUsername,
 } = require('./data-helpers')
 
 class ChatRoom {
@@ -48,6 +49,7 @@ class ChatRoom {
       {
         ...newChatEvent,
         id: uuidv4(),
+        time: new Date(),
       },
     ]
     this._updateClients();
@@ -71,7 +73,6 @@ class ChatRoom {
       ...message,
       type: 'message',
       userId,
-      time: new Date(),
     });
     this._displayAnyImages(message.content, userId);
   }
@@ -107,8 +108,10 @@ class ChatRoom {
   }
 
 
-  _addChatClient = (ws, username) => {
+  _addChatClient = ws => {
     const id = uuidv4()
+    const username = generateRandomUsername();
+    console.log(`adding chat client ${username}`)
     this._chatClients.push({
       ws,
       username,
@@ -147,11 +150,7 @@ class ChatRoom {
     console.log('data: ', data);
 
     if (requestType === 'registerClient') {
-      const {
-        username
-      } = data;
-      console.log(`adding chat client ${username}`)
-      this._addChatClient(ws, username);
+      this._addChatClient(ws);
     }
 
     const {

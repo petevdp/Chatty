@@ -1,17 +1,22 @@
 const fs = require('fs');
+const RandExp = require('randexp');
 
-const generateRandomId = (alphabet => {
-  const alphabetLength = alphabet.length;
-  const randoIter = (key, n) => {
-    if (n === 0) {
-      return key;
-    }
-    const randoIndex = Math.floor(Math.random() * alphabetLength);
-    const randoLetter = alphabet[randoIndex];
-    return randoIter(key + randoLetter, n - 1);
-  };
-  return () => randoIter('', 10);
-})('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+const generateRandomString = (characters, strLength) => {
+  let str = '';
+  for (let i = 0; i < strLength; i++) {
+    str += new RandExp(characters, ).gen();
+  }
+  return str;
+}
+
+const generateRandomId = generateRandomString({
+  alphabet: /[a-zA-Z0-9_]/,
+  strLength: 10,
+});
+
+const generateRandomUsername = () => (
+  'anonymous' + generateRandomString(/[0-9]/, 5)
+)
 
 const addRandomId = msg => ({
   ...msg,
@@ -34,4 +39,5 @@ const getRandomColor = () => {
 module.exports = {
   generateRandomId,
   getRandomColor,
+  generateRandomUsername
 }
