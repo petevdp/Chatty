@@ -1,7 +1,11 @@
 {
-  "name": "d3",
+  "name": "chatty_server",
   "version": "1.0.0",
+  "repository": "https://github.com/grey275/chatty_server",
   "description": "",
+  "engines": {
+    "node": ">=12.3.1"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
