@@ -28,10 +28,9 @@ const ChatEvent = ({ time, userId, userList, ...eventData }) => {
   const getChatEvent = ({ type, ...data }) => {
     if (type === "message") {
       const user = userList.find(user => userId === user.id);
-      if (!user) {
-        throw `user ${userId} does not exist`;
-      }
-      return <Message userColor={user.color} {...data} />;
+      const color = (user && user.color) || "black";
+
+      return <Message userColor={color} {...data} />;
     }
     if (type === "notification") {
       return <Notification {...data} />;
