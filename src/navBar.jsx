@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 
-export default class NavBar extends Component {
-  render() {
-    return (
-      <nav className="navbar">
-        <a href="/" className="navbar-brand">
-          Chatty
-        </a>
-      </nav>
-    );
-  }
-}
+const NavBar = ({ userList }) => {
+  return (
+    <nav className="navbar">
+      <a href="/" className="navbar-brand">
+        Chatty
+      </a>
+      <span className="navbar__num-of-users">
+        {userList.length} users online
+      </span>
+    </nav>
+  );
+};
+
+export default NavBar;

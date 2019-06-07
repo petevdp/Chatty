@@ -10,15 +10,17 @@ class App extends Component {
     const { defaultUser } = this.props;
     this.socket = null;
     this.state = {
-      messages: [],
+      chatEvents: [],
       currentUser: defaultUser,
-      savedUser: defaultUser
+      savedUser: defaultUser,
+      userList: [],
+      userId: null
     };
   }
 
   sendRequest(updates) {
     console.log("updates: ", updates);
-    this.socket.send(JSON.stringify(updates));
+    this.socket.send(JSON.stringify({ userId: this.state.userId, ...updates }));
   }
 
   componentDidMount() {
@@ -30,23 +32,32 @@ class App extends Component {
 
     socket.onopen = event => {
       this.sendRequest({
-        requestType: "updateClient",
+        requestType: "registerClient",
         username: this.state.savedUser
       });
       this.sendRequest({
-        requestType: "registerClient",
+        requestType: "updateClient",
         username: this.state.savedUser
       });
     };
 
     socket.onmessage = event => {
-      const { chatEvents } = JSON.parse(event.data);
-      console.log("recieved message: ", chatEvents);
-      if (chatEvents) {
-        this.setState({ messages: chatEvents });
+      const { type, ...data } = JSON.parse(event.data);
+      if (type === "registered") {
+        const { userId } = data;
+        console.log("registered with id ", userId);
+        this.setState({ userId });
         return;
       }
-      console.log("no chatEvents!");
+
+      if (type === "update") {
+        const { userList, chatEvents } = data;
+        console.log("update: ", chatEvents);
+        this.setState({ userList, chatEvents });
+        return;
+      }
+
+      throw "no message type!";
     };
   }
   onUpdateUser = event => {
@@ -66,13 +77,18 @@ class App extends Component {
   };
 
   render() {
-    const { messages, currentUser } = this.state;
+    const { chatEvents, currentUser, userList, userId } = this.state;
     console.log("currentUser: ", currentUser);
-    console.log("messages: ", messages);
+    console.log("messages: ", chatEvents);
+    console.log("userlist length", userList.length);
     return (
       <div>
-        <NavBar />
-        <ChatEventList messages={messages} />
+        <NavBar userList={userList} />
+        <ChatEventList
+          messages={chatEvents}
+          userList={userList}
+          userId={userId}
+        />
         <ChatBar
           user={currentUser}
           onMessageSubmit={this.onMessageSubmit}
