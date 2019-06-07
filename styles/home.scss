@@ -55,6 +55,10 @@ body {
   padding: 0 10px;
 }
 
+.image img {
+  max-width: 40em;
+}
+
 .message-content {
   flex: 8;
 }
@@ -73,7 +77,13 @@ body {
   position: fixed;
   right: 0;
   top: 0;
+  display: flex;
+  align-items: center;
+  justify-conetent: space-between;
 }
+
+.navbar__num-of-users {}
+
 
 .navbar-brand {
   color: inherit;
