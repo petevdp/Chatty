@@ -39,5 +39,5 @@ const getRandomColor = () => {
 module.exports = {
   generateRandomId,
   getRandomColor,
-  generateRandomUsername
+  generateRandomUsername,
 }
