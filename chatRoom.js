@@ -1,27 +1,15 @@
 const WebSocket = require('ws');
 const uuidv4 = require('uuid/v4');
-
-const {
-  getRandomColor,
-  generateRandomUsername,
-} = require('./data-helpers')
 const ChatClient = require('./chatClient')
 
 class ChatRoom {
   constructor(wss, chatEvents = []) {
     this._wss = wss;
     this._chatClients = [];
-    this._initConnection();
+
     // chatroom state
     this._chatEvents = chatEvents;
-  }
-
-  _updateClientSocket = (ws, username) => {
-    ws.send(JSON.stringify({
-      type: 'update',
-      chatEvents: this._getChatEventsWithDirection(username),
-      userList: this._getUserList(),
-    }));
+    this._wss.on('connection', ws => this._addChatClient(ws))
   }
 
   _updateAllClientSockets() {
@@ -63,52 +51,6 @@ class ChatRoom {
     })
   }
 
-  _addNewMessage = (message, userId) => {
-    const {
-      ws,
-      ...userObject
-    } = this._getChatClient(userId);
-    this._addNewChatEvent({
-      ...message,
-      type: 'message',
-      userObject,
-    });
-    this._displayAnyImages(message.content, userId);
-  }
-
-  _addUserUpdate = (newUsername, oldUsername, color) => {
-    const event = {
-      oldUserObject: {
-        username: newUsername,
-        color,
-      },
-      newUserObject: {
-        username: newUsername,
-        color,
-      },
-      type: 'notification',
-      username: newUser,
-    }
-    this._addNewChatEvent(event)
-  }
-
-  _getChatEventsWithDirection = clientUsername => {
-    if (!clientUsername) {
-      console.warn('needs client username');
-    }
-    return this._chatEvents.map(event => {
-      const direction = (
-        event.username && event.username === clientUsername ?
-        'outgoing' :
-        'incoming'
-      )
-      return {
-        ...event,
-        direction,
-      }
-    })
-  }
-
   _getChatClient = id => (
     this._chatClients.find(client => client.id === id)
   )
@@ -119,73 +61,10 @@ class ChatRoom {
   })
 
   _addChatClient = ws => {
-    const addToChatClientLIst = (chatClient) => {
-      console.log('chatClient', chatClient);
-      this._chatClients.push(chatClient);
-    };
-    new ChatClient(ws, this._addNewChatEvent, this._getRoomState, addToChatClientLIst);
+    const chatClient = new ChatClient(ws, this._addNewChatEvent, this._getRoomState);
+    this._chatClients.push(chatClient);
+    chatClient.broadcast();
   }
-
-  _handleSocketMessage = (ws, dataString) => {
-    const {
-      requestType,
-      data
-    } = JSON.parse(dataString);
-    if (requestType === 'registerClient') {
-      this._addChatClient(ws);
-    }
-
-    const {
-      userId
-    } = data;
-
-    if (requestType === 'updateClient') {
-      const {
-        username
-      } = data;
-      this._updateClientSocket(ws, username);
-    }
-
-    if (requestType === 'newMessage') {
-      const {
-        message
-      } = data;
-      this._addNewMessage(message, userId)
-    }
-
-    if (requestType === 'userUpdate') {
-      const {
-        newUsername
-      } = data;
-      this._updateUsername(userId, newUsername);
-    }
-  }
-
-  _updateClientInfo = (id, updates) => {}
-
-  _updateUsername(userId, newUsername) {
-    const clients = this._chatClients;
-    const clientIndex = clients.findIndex(client => (
-      userUpdate.username === client.oldUser
-    ))
-    const {
-      username,
-      color
-    } = clients[clientIndex];
-    this._addUserUpdate(newUsername, username, color);
-    clients[clientIndex].username = userUpdate.newUser;
-  }
-
-
-  _initConnection = () => {
-    this._wss.on('connection', ws => this._addChatClient(ws))
-  }
-
-  // _onConnect = ws => {
-  //   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  //   ws.on('close', () => this._deleteChatClient(ws));
-  //   ws.on('message', (data) => this._handleSocketMessage(ws, data));
-  // }
 }
 
 module.exports = ChatRoom;

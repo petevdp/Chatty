@@ -7,7 +7,7 @@ const {
 } = require('./data-helpers')
 
 class ChatClient {
-  constructor(socket, addChatEvent, getRoomState, addToChatClientList) {
+  constructor(socket, addChatEvent, getRoomState) {
     this._addChatEvent = addChatEvent;
     this._getRoomState = getRoomState;
 
@@ -20,9 +20,9 @@ class ChatClient {
     console.log('const readyState', this._socket.readyState)
 
     this._registerSocketHandlers();
+  }
 
-    addToChatClientList(this);
-
+  broadcast = () => {
     this._addChatEvent({
       userObject: this._displayData,
       type: 'newUser',
@@ -33,7 +33,7 @@ class ChatClient {
         userId: this._id,
         username: this._displayData.username,
       }
-    )
+    );
   }
 
   isActive = () => {
