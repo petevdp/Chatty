@@ -2,13 +2,16 @@
 
 This is the server component of my ChattyApp project, a simple live chat client.
 
-## Requirements
+## initial Dependencies
 
-Tested on node v12.3.1
+git
+node >=12.3.1
 
 ## Setup for the Server
 
-- `git clone https://github.com/grey275/chatty_server`
-- `cd chatty_server`
-- `npm install`
-- `npm start`
+```
+git clone https://github.com/grey275/chatty_server
+cd chatty_server
+npm install
+npm start
+```
