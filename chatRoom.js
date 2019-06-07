@@ -109,18 +109,19 @@ class ChatRoom {
 
 
   _addChatClient = ws => {
-    const id = uuidv4()
+    const userId = uuidv4()
     const username = generateRandomUsername();
     console.log(`adding chat client ${username}`)
     this._chatClients.push({
       ws,
       username,
-      id,
+      id: userId,
       color: getRandomColor(),
     })
     ws.send(JSON.stringify({
       type: 'registered',
-      userId: id
+      userId,
+      username,
     }));
     this._addNewChatEvent({
       content: `${username} has joined the chat`,
