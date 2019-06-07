@@ -3,6 +3,7 @@ const uuidv4 = require('uuid/v4');
 const {
   getRandomColor
 } = require('./data-helpers')
+
 class ChatRoom {
   constructor(wss, chatEvents = []) {
     this._wss = wss;
@@ -13,7 +14,12 @@ class ChatRoom {
   }
 
   _updateClient = (ws, username) => {
-    ws.send(JSON.stringify(this._getUserContextState(username)));
+    console.log(`sending to ${username}`);
+    ws.send(JSON.stringify({
+      type: 'update',
+      chatEvents: this._getChatEventsWithDirection(username),
+      userList: this._getUserList(),
+    }));
   }
 
   _updateClients() {
@@ -23,7 +29,6 @@ class ChatRoom {
         username
       } = userClient;
       if (ws.readyState === WebSocket.OPEN) {
-        console.log(`sending to ${username}`);
         this._updateClient(ws, username);
       }
     })
@@ -35,11 +40,6 @@ class ChatRoom {
       ...rest
     }) => rest)
   )
-
-  _getUserContextState = username => ({
-    chatEvents: this._getChatEventsWithDirection(username),
-    userList: this._getUserList(),
-  });
 
   _addNewChatEvent(newChatEvent) {
     console.log('newChatEvent: ', newChatEvent);
@@ -53,11 +53,27 @@ class ChatRoom {
     this._updateClients();
   }
 
-  _addNewMessage = message => {
+  _displayAnyImages = (content, userId) => {
+    const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g
+    console.log('content:', content);
+    const matches = content.match(imageUrlRegex);
+    matches && matches.forEach(url => {
+      this._addNewChatEvent({
+        type: 'image',
+        userId,
+        url,
+      })
+    })
+  }
+
+  _addNewMessage = (message, userId) => {
     this._addNewChatEvent({
       ...message,
-      type: 'message'
+      type: 'message',
+      userId,
+      time: new Date(),
     });
+    this._displayAnyImages(message.content, userId);
   }
 
   _addUserUpdate = userUpdate => {
@@ -90,17 +106,19 @@ class ChatRoom {
     })
   }
 
-  _updateUserSocket = (ws, username) => {
-    this._getUserContextState(username)
-  }
 
   _addChatClient = (ws, username) => {
+    const id = uuidv4()
     this._chatClients.push({
       ws,
       username,
-      id: uuidv4(),
+      id,
       color: getRandomColor(),
     })
+    ws.send(JSON.stringify({
+      type: 'registered',
+      userId: id
+    }));
     this._addNewChatEvent({
       content: `${username} has joined the chat`,
       type: 'notification',
@@ -136,6 +154,10 @@ class ChatRoom {
       this._addChatClient(ws, username);
     }
 
+    const {
+      userId
+    } = data;
+
     if (requestType === 'updateClient') {
       const {
         username
@@ -148,7 +170,7 @@ class ChatRoom {
       const {
         message
       } = data;
-      this._addNewMessage(message)
+      this._addNewMessage(message, userId)
     }
 
     if (requestType === 'userUpdate') {
@@ -177,10 +199,6 @@ class ChatRoom {
 
   _onConnect = ws => {
     console.log('Client connected');
-    ws.send(JSON.stringify({
-      chatEvents: this._chatEvents,
-    }));
-
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
     ws.on('close', () => this._deleteChatClient(ws));
     ws.on('message', (data) => this._handleSocketMessage(ws, data));

@@ -18,4 +18,4 @@ const wss = new SocketServer({
 });
 
 
-const chatRoom = new ChatRoom(wss, messages)
+const chatRoom = new ChatRoom(wss)
