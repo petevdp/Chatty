@@ -7,12 +7,11 @@ import NavBar from "./navBar.jsx";
 class App extends Component {
   constructor(props) {
     super(props);
-    const { defaultUser } = this.props;
     this.socket = null;
     this.state = {
       chatEvents: [],
-      currentUser: defaultUser,
-      savedUser: defaultUser,
+      currentUser: "",
+      savedUser: "",
       userList: [],
       userId: null
     };
@@ -32,21 +31,19 @@ class App extends Component {
 
     socket.onopen = event => {
       this.sendRequest({
-        requestType: "registerClient",
-        username: this.state.savedUser
+        requestType: "registerClient"
       });
       this.sendRequest({
-        requestType: "updateClient",
-        username: this.state.savedUser
+        requestType: "updateClient"
       });
     };
 
     socket.onmessage = event => {
       const { type, ...data } = JSON.parse(event.data);
       if (type === "registered") {
-        const { userId } = data;
+        const { userId, username } = data;
         console.log("registered with id ", userId);
-        this.setState({ userId });
+        this.setState({ userId, currentUser: username, savedUser: username });
         return;
       }
 

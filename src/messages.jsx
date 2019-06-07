@@ -8,6 +8,7 @@ const Message = props => {
     <div className="message">
       <span className="message-username" style={{ color: userColor }}>
         {username}
+        <span style={{ color: "black" }}>:</span>
       </span>
       <span className="message-content">{content}</span>
     </div>
@@ -26,10 +27,9 @@ const Image = ({ url }) => (
 
 const ChatEvent = ({ time, userId, userList, ...eventData }) => {
   const getChatEvent = ({ type, ...data }) => {
+    const user = userList.find(user => userId === user.id);
+    const color = (user && user.color) || "black";
     if (type === "message") {
-      const user = userList.find(user => userId === user.id);
-      const color = (user && user.color) || "black";
-
       return <Message userColor={color} {...data} />;
     }
     if (type === "notification") {
