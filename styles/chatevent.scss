@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css");
+
+.message {
+  display: flex;
+  padding: 5px;
+}
+
+.message.system {
+  font-style: italic;
+  padding: 5px 20px;
+}
+
+.message-content,
+.message-username {
+  // overflow: hidden;
+  margin: 5px;
+  padding: 0 10px;
+}
+
+.chat-event {
+  width: 100%;
+  border-bottom: solid #9b99999f 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  padding: .5em;
+}
+
+.chat-event__time {
+  font-size: small;
+  font-style: italic;
+  color: grey;
+}
+
+.image img {
+  max-width: 40em;
+}

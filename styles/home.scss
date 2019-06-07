@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css");
 
+
 body {
   background: white;
   color: black;
@@ -38,27 +39,6 @@ body {
   flex: 2;
 }
 
-.message {
-  display: flex;
-  padding: 5px;
-}
-
-.message.system {
-  font-style: italic;
-  padding: 5px 20px;
-}
-
-.message-content,
-.message-username {
-  overflow: hidden;
-  margin: 5px;
-  padding: 0 10px;
-}
-
-.image img {
-  max-width: 40em;
-}
-
 .message-content {
   flex: 8;
 }
@@ -79,7 +59,7 @@ body {
   top: 0;
   display: flex;
   align-items: center;
-  justify-conetent: space-between;
+  justify-content: space-between;
 }
 
 .navbar__num-of-users {}
