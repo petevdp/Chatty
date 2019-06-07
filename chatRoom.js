@@ -15,7 +15,6 @@ class ChatRoom {
   }
 
   _updateClient = (ws, username) => {
-    console.log(`sending to ${username}`);
     ws.send(JSON.stringify({
       type: 'update',
       chatEvents: this._getChatEventsWithDirection(username),
@@ -43,7 +42,6 @@ class ChatRoom {
   )
 
   _addNewChatEvent(newChatEvent) {
-    console.log('newChatEvent: ', newChatEvent);
     this._chatEvents = [
       ...this._chatEvents,
       {
@@ -57,7 +55,6 @@ class ChatRoom {
 
   _displayAnyImages = (content, userId) => {
     const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g
-    console.log('content:', content);
     const matches = content.match(imageUrlRegex);
     matches && matches.forEach(url => {
       this._addNewChatEvent({
@@ -111,7 +108,6 @@ class ChatRoom {
   _addChatClient = ws => {
     const userId = uuidv4()
     const username = generateRandomUsername();
-    console.log(`adding chat client ${username}`)
     this._chatClients.push({
       ws,
       username,
@@ -127,7 +123,6 @@ class ChatRoom {
       content: `${username} has joined the chat`,
       type: 'notification',
     })
-    console.log('chatClients: ', this._chatClients);
   }
 
   _deleteChatClient = (ws) => {
@@ -146,9 +141,6 @@ class ChatRoom {
       requestType,
       ...data
     } = JSON.parse(dataString);
-    console.log('server message!')
-    console.log('requestType: ', requestType);
-    console.log('data: ', data);
 
     if (requestType === 'registerClient') {
       this._addChatClient(ws);
@@ -166,7 +158,6 @@ class ChatRoom {
     }
 
     if (requestType === 'newMessage') {
-      console.log('new message!')
       const {
         message
       } = data;
@@ -188,7 +179,6 @@ class ChatRoom {
       userUpdate.username === client.oldUser
     ))
     clients[clientIndex].username = userUpdate.newUser;
-    console.log('new username: ', clients[clientIndex].username);
   }
 
 
@@ -198,7 +188,6 @@ class ChatRoom {
 
 
   _onConnect = ws => {
-    console.log('Client connected');
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
     ws.on('close', () => this._deleteChatClient(ws));
     ws.on('message', (data) => this._handleSocketMessage(ws, data));
