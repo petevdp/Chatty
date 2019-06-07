@@ -15,3 +15,5 @@ cd chatty_server
 npm install
 npm start
 ```
+
+## Now go to the [ChattyApp](https://github.com/grey275/ChattyApp) repo to run the client!
