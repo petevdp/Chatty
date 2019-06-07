@@ -1,5 +1,7 @@
 # ChattyApp (client)
 
+[screenshot](/screenshots/fullscreen.png)
+
 The client for my ChattyApp implementation.
 
 ## Initial Dependencies
