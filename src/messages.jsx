@@ -19,7 +19,8 @@ const Message = props => {
     );
 
     return content
-      .split()
+      .split(" ")
+      .map(group => " " + group + " ")
       .map(group => (group.match(imageUrlRegex) ? img(group) : group));
   };
 
