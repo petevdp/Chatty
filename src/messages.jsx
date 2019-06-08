@@ -66,38 +66,29 @@ const Disconnect = ({ userObject }) => (
   </div>
 );
 
-const ChatEvent = ({ time, ...eventData }) => {
-  const getChatEvent = ({ type, id, ...data }) => {
-    if (type === "message") {
-      return <Message key={id} {...data} />;
-    }
-    if (type === "notification") {
-      throw "use new interface";
-      return <Notification key={id} {...data} />;
-    }
-    if (type === "image") {
-      const { url } = data;
-      return <Image key={id} {...data} />;
-    }
-    if (type === "newUser") {
-      console.log("newUser data:", eventData);
-      return <NewUser {...eventData} />;
-    }
-    if (type === "newUsername") {
-      return <NameChange {...data} />;
-    }
+const ChatEvent = ({ time, type, ...eventData }) => {
+  const getEventOfType = eventComponent => data =>
+    React.createElement(eventComponent, { key: data.id, ...data });
 
-    if (type === "disconnect") {
-      return <Disconnect {...data} />;
-    }
-
-    throw `unknown event ${type}`;
+  const eventMapping = {
+    message: getEventOfType(Message),
+    image: getEventOfType(Image),
+    newUser: getEventOfType(NewUser),
+    newUsername: getEventOfType(NameChange),
+    disconnect: getEventOfType(Disconnect)
   };
-  const chatEvent = getChatEvent(eventData);
 
+  console.log("type: ", type);
+  const eventDetails = eventMapping[type](eventData);
+
+  if (!eventDetails) {
+    throw `unknown event ${type}`;
+  }
+
+  console.log("event details: ", eventDetails);
   return (
     <div className="chat-event">
-      {chatEvent}
+      {[eventDetails]}
       <span className="chat-event__time">{moment(time).fromNow()}</span>
     </div>
   );
