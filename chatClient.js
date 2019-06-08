@@ -30,7 +30,7 @@ class ChatClient {
 
     this._sendMessage(
       'registered', {
-        userId: this._id,
+        userId: this.id,
         username: this._displayData.username,
       }
     );
@@ -121,7 +121,13 @@ class ChatClient {
   }
 
   _registerSocketHandlers = () => {
-    this._socket.on('close', () => console.log('socket closed'));
+    this._socket.on('close', () => {
+      console.log(`${this._displayData.username} disconnected`);
+      this._addChatEvent({
+        type: 'disconnect',
+        userObject: this._displayData,
+      });
+    });
     this._socket.on('message', this._handleSocketMessage);
   }
 }
