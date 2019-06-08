@@ -39,18 +39,6 @@ class ChatRoom {
     this._updateAllClientSockets();
   }
 
-  _displayAnyImages = (content, userId) => {
-    const imageUrlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g
-    const matches = content.match(imageUrlRegex);
-    matches && matches.forEach(url => {
-      this._addNewChatEvent({
-        type: 'image',
-        userId,
-        url,
-      })
-    })
-  }
-
   _getChatClient = id => (
     this._chatClients.find(client => client.id === id)
   )
