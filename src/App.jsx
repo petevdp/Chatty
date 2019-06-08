@@ -27,22 +27,17 @@ class App extends Component {
     const socket = new WebSocket("ws:localhost:3001");
     this.socket = socket;
 
-    console.log("socket: ", socket);
-
     socket.onopen = event => {
-      this.sendRequest({
-        requestType: "registerClient"
-      });
-      this.sendRequest({
-        requestType: "updateClient"
-      });
+      console.log("client opened");
+      console.log("socket: ", socket);
     };
 
     socket.onmessage = event => {
-      const { type, ...data } = JSON.parse(event.data);
+      const { type, data } = JSON.parse(event.data);
       if (type === "registered") {
         const { userId, username } = data;
-        console.log("registered with id ", userId);
+        console.log("userid: ", userId);
+        console.log("registered with username ", username);
         this.setState({ userId, currentUser: username, savedUser: username });
         return;
       }
@@ -65,8 +60,10 @@ class App extends Component {
   onMessageSubmit = content => {
     const { currentUser, savedUser } = this.state;
     if (savedUser !== currentUser) {
-      const userUpdate = { oldUser: savedUser, newUser: currentUser };
-      this.sendRequest({ requestType: "userUpdate", userUpdate });
+      this.sendRequest({
+        requestType: "changeUsername",
+        newUsername: currentUser
+      });
       this.setState({ savedUser: currentUser });
     }
     const message = { username: currentUser, content };
@@ -74,18 +71,14 @@ class App extends Component {
   };
 
   render() {
-    const { chatEvents, currentUser, userList, userId } = this.state;
+    const { chatEvents, currentUser, userList } = this.state;
     console.log("currentUser: ", currentUser);
     console.log("messages: ", chatEvents);
     console.log("userlist length", userList.length);
     return (
       <div>
         <NavBar userList={userList} />
-        <ChatEventList
-          messages={chatEvents}
-          userList={userList}
-          userId={userId}
-        />
+        <ChatEventList messages={chatEvents} userList={userList} />
         <ChatBar
           user={currentUser}
           onMessageSubmit={this.onMessageSubmit}
