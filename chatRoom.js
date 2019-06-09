@@ -14,7 +14,7 @@ class ChatRoom {
 
   _updateAllClientSockets() {
     console.log('update client sockets');
-    console.log('chacClients', this._chatClients)
+    console.log('chatClients', this._chatClients)
     this._chatClients.forEach(chatClient => {
       chatClient.updateSocketState();
     });
