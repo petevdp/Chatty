@@ -1,19 +1,21 @@
-var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.config');
+// server.js
+const express = require('express');
+const WebSocket = require('ws');
+const SocketServer = WebSocket.Server;
 
-new WebpackDevServer(webpack(config), {
-    publicPath: config.output.publicPath,
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: 1000,
-      ignored: /node_modules/
-    }
-  })
-  .listen(3000, '0.0.0.0', function (err, result) {
-    if (err) {
-      console.log(err);
-    }
+const ChatRoom = require('./chatRoom');
+// sample messages
+let messages = require('./messages')
 
-    console.log('Running at http://0.0.0.0:3000');
-  });
+const PORT = 3001;
+const server = express()
+  .use(express.static('public'))
+  .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
+
+// Create the WebSockets server
+const wss = new SocketServer({
+  server
+});
+
+
+const chatRoom = new ChatRoom(wss)

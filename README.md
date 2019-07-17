@@ -1,26 +1,31 @@
-# ChattyApp (client)
+# ChattyApp (server module)
 
-![screenshot](/screenshots/fullscreen.png)
+This is the server component of my ChattyApp project, a real-time web chatroom.
+the Client component of this project lives [here](https://github.com/grey275/ChattyApp).
 
-The client for my ChattyApp implementation.
-
-## Initial Dependencies
+## initial Dependencies
 
 ```
-npm
 git
+node >=12.3.1
 ```
 
-### Setup
-
-First, install the server component of this app [here](https://github.com/grey275/chatty_server).
-
-Then install the dependencies and start the server.
+If you have `nvm` installed(the lighthouse vagrant machine has this) you can easily install and switch to the correct version like this:
 
 ```
-git clone
-cd ChattyApp
+nvm install 12.3.1
+nvm use 12.3.1
+```
+
+If `node -V` is now outputting `v12.3.1`, you're good to go!
+
+## Setup for the Server
+
+```
+git clone https://github.com/grey275/chatty_server
+cd chatty_server
 npm install
 npm start
-open http://localhost:3000
 ```
+
+_Now go to the [ChattyApp](https://github.com/grey275/ChattyApp) repo to run the client!_
