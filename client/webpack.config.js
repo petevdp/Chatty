@@ -1,15 +1,21 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 const CLIENT_DIR = path.join(__dirname, '');
 
 module.exports = {
-  mode: 'development',
   devtool: 'eval',
+  mode: 'development',
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
     './src/index.jsx'
   ],
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 3000
+  },
   output: {
     path: path.join(CLIENT_DIR, 'dist'),
     filename: 'bundle.js',
@@ -28,6 +34,14 @@ module.exports = {
           'style-loader',
           'css-loader',
           'sass-loader'
+        ]
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: "html-loader"
+          }
         ]
       }
     ]
