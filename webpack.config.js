@@ -1,23 +1,27 @@
 var path = require('path');
 var webpack = require('webpack');
 
+const CLIENT_DIR = path.join(__dirname, '');
+
 module.exports = {
   devtool: 'eval',
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
-    './src/index.jsx'
+    path.join(CLIENT_DIR, 'index.jsx')
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(CLIENT_DIR, 'dist'),
     filename: 'bundle.js',
     publicPath: '/build/'
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        include: path.join(__dirname, 'src')
+        test: /\.(js|jsx)?$/,
+        use: {
+          loader: "babel-loader"
+        },
+        include: path.join(CLIENT_DIR, 'src')
       },
       {
         test: /\.scss$/,

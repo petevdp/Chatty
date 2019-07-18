@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const CLIENT_DIR = path.join(__dirname, '');
 
 module.exports = {
+  mode: 'development',
   devtool: 'eval',
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
