@@ -1,1 +1,0 @@
-const exampleSocket = new WebSocket('ws://localhost:3001');
