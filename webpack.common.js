@@ -9,13 +9,8 @@ module.exports = {
   mode: 'development',
   entry: [
     'webpack-dev-server/client?http://localhost:3000',
-    './src/index.jsx'
+    './client/src/index.jsx'
   ],
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 3000
-  },
   output: {
     path: path.join(CLIENT_DIR, 'dist'),
     filename: 'bundle.js',
@@ -45,5 +40,7 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  plugins: [
+  ]
 };
