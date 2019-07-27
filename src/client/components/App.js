@@ -24,7 +24,7 @@ class App extends Component {
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    const socket = new WebSocket("ws:localhost:3000");
+    const socket = new WebSocket('ws:localhost:40510');
     this.socket = socket;
 
     socket.onopen = event => {
