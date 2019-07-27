@@ -9,11 +9,13 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "node dist/server.js",
+    "test": "yarn jest",
+    "coverage": "yarn jest coverage",
     "clean": "rm -rf dist/*",
     "buildDev": "yarn clean && webpack --config webpack/webpack.client.dev.js",
-    "buildProd": "yarn clean && webpack --mode production --config webpack/webpack.server.js && webpack --config webpack/webpack.client.prod.js"
+    "start": "yarn buildDev && NODE_ENV=development bash -c 'yarn nodemon src/server/server.js'",
+    "buildProd": "yarn clean && webpack --config webpack/webpack.client.prod.js",
+    "serveProd": "NODE_ENV=production node src/server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -35,7 +37,9 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "6.9.0",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^24.8.0",
     "node-sass": "^4.12.0",
+    "nodemon": "^1.19.1",
     "sass-loader": "^7.1.0",
     "sockjs-client": "^1.1.2",
     "style-loader": "^0.23.1",
