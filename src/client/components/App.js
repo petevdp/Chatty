@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import ChatEventList from "./messages.jsx";
-import ChatBar from "./chatBar.jsx";
-import NavBar from "./navBar.jsx";
+import ChatEventList from "./messages";
+import ChatBar from "./chatBar";
+import NavBar from "./navBar";
 
 class App extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class App extends Component {
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    const socket = new WebSocket("ws:localhost:3001");
+    const socket = new WebSocket("ws:localhost:3000");
     this.socket = socket;
 
     socket.onopen = event => {
