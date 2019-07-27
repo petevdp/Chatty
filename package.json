@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node dist/server.js",
     "clean": "rm -rf dist/*",
-    "buildDev": "yarn clean && webpack --mode development --config webpack/webpack.server.js && webpack --config webpack/webpack.client.dev.js",
+    "buildDev": "yarn clean && webpack --config webpack/webpack.client.dev.js",
     "buildProd": "yarn clean && webpack --mode production --config webpack/webpack.server.js && webpack --config webpack/webpack.client.prod.js"
   },
   "keywords": [],
@@ -41,8 +41,9 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2",
     "webpack-dev-middleware": "^3.7.0",
+    "webpack-dev-server": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {

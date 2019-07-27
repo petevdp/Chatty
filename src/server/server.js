@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const path = require('path')
 const SocketServer = WebSocket.Server;
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
 
 const { DIST, ROOT } = require('../../constants');
 const ChatRoom = require('./chatRoom');
@@ -18,7 +19,7 @@ const compiler = webpack(config)
 app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath,
 }));
-
+app.use(webpackHotMiddleware(compiler))
 // Create the WebSockets server
 const wss = new SocketServer({
   server: app,
