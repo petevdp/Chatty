@@ -17,6 +17,12 @@
     "buildProd": "yarn clean && webpack --config webpack/webpack.client.prod.js",
     "serveProd": "NODE_ENV=production node src/server/server.js"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.scss$": "rootDir>/__mocks__styleMock.js",
+      "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
