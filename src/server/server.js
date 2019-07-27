@@ -1,17 +1,24 @@
 // server.js
 const express = require('express');
 const WebSocket = require('ws');
+const webpack = require('webpack')
 const path = require('path')
 const SocketServer = WebSocket.Server;
+const webpackDevMiddleware = require('webpack-dev-middleware');
 
-const { DIST } = require('../../constants');
+const { DIST, ROOT } = require('../../constants');
 const ChatRoom = require('./chatRoom');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
-const INDEX = path.join(__dirname, 'index.html')
-console.log('dirname: ', __dirname);
+console.log('root: ', ROOT)
+const config = require(path.join(ROOT, 'webpack/webpack.client.dev.js'))
+const compiler = webpack(config)
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: config.output.publicPath,
+}));
+
 // Create the WebSockets server
 const wss = new SocketServer({
   server: app,
@@ -19,10 +26,18 @@ const wss = new SocketServer({
 
 const chatRoom = new ChatRoom(wss)
 
-app.use(express.static(__dirname))
+const INDEX = path.join(DIST, 'index.html')
+app.use(express.static(DIST))
 app.get('/', (req, res) => {
   console.log('getting /')
-  res.sendFile(INDEX)
+  compiler.outputFileSystem.readFile(INDEX, (err, result) => {
+    if (err) {
+      return next(err)
+    }
+    res.set('content-type', 'text/html')
+    res.send(result)
+    res.end()
+  })
 })
 
 
