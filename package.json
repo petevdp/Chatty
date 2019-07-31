@@ -12,8 +12,8 @@
     "test": "yarn jest",
     "coverage": "yarn jest coverage",
     "clean": "rm -rf dist/*",
-    "buildDev": "yarn clean && webpack --config webpack/webpack.client.dev.js",
-    "start": "yarn buildDev && NODE_ENV=development bash -c 'yarn nodemon src/server/server.js'",
+    "buildDev": "webpack --config webpack/webpack.client.dev.js",
+    "start": "yarn buildDev && NODE_ENV=development bash -c 'yarn node src/server/server.js'",
     "buildProd": "yarn clean && webpack --config webpack/webpack.client.prod.js",
     "serveProd": "NODE_ENV=production node src/server/server.js"
   },
@@ -62,8 +62,8 @@
     "moment": "^2.24.0",
     "prettier": "^1.17.1",
     "randexp": "^0.5.3",
-    "react": "15.4.2",
-    "react-dom": "15.4.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "uuid": "^3.3.2",
     "webpack-node-externals": "^1.7.2",
     "ws": "^7.0.0"
