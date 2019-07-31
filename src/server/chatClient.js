@@ -17,7 +17,6 @@ class ChatClient {
       color: generateRandomColor(),
     }
     this.id = uuidv4();
-    console.log('const readyState', this._socket.readyState)
 
     this._registerSocketHandlers();
   }
@@ -37,7 +36,6 @@ class ChatClient {
   }
 
   isActive = () => {
-    console.log('readyState: ', this._socket.readyState);
     return this._socket.readyState === WebSocket.OPEN;
   }
 
@@ -49,7 +47,6 @@ class ChatClient {
   }
 
   updateSocketState = () => {
-    console.log(`updating ${this._displayData.username}`);
     this.isActive() &&
       this._sendMessage(
         'update',
@@ -122,7 +119,6 @@ class ChatClient {
 
   _registerSocketHandlers = () => {
     this._socket.on('close', () => {
-      console.log(`${this._displayData.username} disconnected`);
       this._addChatEvent({
         type: 'disconnect',
         userObject: this._displayData,

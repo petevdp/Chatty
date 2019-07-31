@@ -18,33 +18,26 @@ class App extends Component {
   }
 
   sendRequest(updates) {
-    console.log("updates: ", updates);
     this.socket.send(JSON.stringify({ userId: this.state.userId, ...updates }));
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
     const socket = new WebSocket('ws:localhost:40510');
     this.socket = socket;
 
     socket.onopen = event => {
-      console.log("client opened");
-      console.log("socket: ", socket);
     };
 
     socket.onmessage = event => {
       const { type, data } = JSON.parse(event.data);
       if (type === "registered") {
         const { userId, username } = data;
-        console.log("userid: ", userId);
-        console.log("registered with username ", username);
         this.setState({ userId, currentUser: username, savedUser: username });
         return;
       }
 
       if (type === "update") {
         const { userList, chatEvents } = data;
-        console.log("update: ", chatEvents);
         this.setState({ userList, chatEvents });
         return;
       }
@@ -72,9 +65,6 @@ class App extends Component {
 
   render() {
     const { chatEvents, currentUser, userList } = this.state;
-    console.log("currentUser: ", currentUser);
-    console.log("messages: ", chatEvents);
-    console.log("userlist length", userList.length);
     return (
       <div>
         <NavBar userList={userList} />

@@ -22,8 +22,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath,
   }));
+
   app.use(webpackHotMiddleware(compiler))
   // Create the WebSockets server
+
   app.get('*', (req, res) => {
     console.log('getting /')
     compiler.outputFileSystem.readFile(INDEX, (err, result) => {
@@ -45,7 +47,6 @@ if (process.env.NODE_ENV === 'development') {
 const wss = new SocketServer({
   port: 40510,
 });
-
-const chatRoom = new ChatRoom(wss)
+new ChatRoom(wss)
 
 app.listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));

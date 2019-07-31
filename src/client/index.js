@@ -13,6 +13,4 @@ if (typeof(module.hot) !== 'undefined') {
   module.hot.accept();
 }
 
-console.log('hi')
-
 ReactDOM.render(<App />, document.getElementById("react-root"));

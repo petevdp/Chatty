@@ -25,7 +25,6 @@ const Message = props => {
   };
 
   const contentWithImages = getContentWithImages(content);
-  console.log("content: ", contentWithImages);
   return (
     <div className="message">
       <span className="message__user-container">
@@ -79,14 +78,12 @@ const ChatEvent = ({ time, type, ...eventData }) => {
     disconnect: getEventOfType(Disconnect)
   };
 
-  console.log("type: ", type);
   const eventDetails = eventMapping[type](eventData);
 
   if (!eventDetails) {
     throw `unknown event ${type}`;
   }
 
-  console.log("event details: ", eventDetails);
   return (
     <div className="chat-event">
       {[eventDetails]}
