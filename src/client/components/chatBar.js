@@ -1,8 +1,16 @@
 import React, { Component } from "react";
+
+const CHAT_INPUT_ID = 'chat__input'
 export default class ChatBar extends Component {
   constructor(props) {
     super(props);
     this.state = { newMessage: "" };
+    this._chatInput = React.createRef()
+  }
+
+  componentDidMount = () => {
+    console.log(this._chatInput);
+    this._chatInput.current.focus();
   }
 
   updateMessage = evt => {
@@ -31,6 +39,9 @@ export default class ChatBar extends Component {
         />
         <input
           className="chatbar-message"
+          id={CHAT_INPUT_ID}
+          ref={this._chatInput}
+          autoFocus={true}
           placeholder="Type a message and hit ENTER"
           value={newMessage}
           onKeyPress={this.onKeyPress}
