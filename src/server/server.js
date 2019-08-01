@@ -4,19 +4,20 @@ const WebSocket = require('ws');
 const webpack = require('webpack')
 const path = require('path')
 const SocketServer = WebSocket.Server;
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
 
 const { DIST, ROOT } = require('../../constants');
 const ChatRoom = require('./chatRoom');
 
 const PORT = process.env.PORT || 3000;
+const SOCKET_PORT = process.env.SOCKET_PORT || 40510;
 const app = express();
 
 const INDEX = path.join(DIST, 'index.html')
 app.use(express.static(DIST))
 
 if (process.env.NODE_ENV === 'development') {
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-hot-middleware');
   const config = require(path.join(ROOT, 'webpack/webpack.client.dev.js'))
   const compiler = webpack(config)
   app.use(webpackDevMiddleware(compiler, {
@@ -45,8 +46,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const wss = new SocketServer({
-  port: 40510,
+  port: SOCKET_PORT,
 });
-new ChatRoom(wss)
+new ChatRoom(wss);
 
 app.listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
