@@ -1,31 +1,23 @@
-# ChattyApp (server module)
+# Chatty
+Real time web chatroom built using React, NodeJS, and websockets.
 
-This is the server component of my ChattyApp project, a real-time web chatroom.
-the Client component of this project lives [here](https://github.com/grey275/ChattyApp).
+## Screenshot
+![](screenshots/fullscreen.png)
 
-## initial Dependencies
+Not terribly pretty, but functional!
 
-```
-git
-node >=12.3.1
-```
-
-If you have `nvm` installed(the lighthouse vagrant machine has this) you can easily install and switch to the correct version like this:
+## Dependencies
 
 ```
-nvm install 12.3.1
-nvm use 12.3.1
+node >=12
 ```
 
-If `node -V` is now outputting `v12.3.1`, you're good to go!
-
-## Setup for the Server
+## Setup
 
 ```
-git clone https://github.com/grey275/chatty_server
-cd chatty_server
+git clone https://github.com/grey275/Chatty
+cd Chatty
 npm install
 npm start
 ```
-
-_Now go to the [ChattyApp](https://github.com/grey275/ChattyApp) repo to run the client!_
+Navigate to localhost:3000 and enjoy!
