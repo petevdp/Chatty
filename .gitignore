@@ -53,3 +53,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 yarn-error.log
+
+# vim swap
+*.swp
