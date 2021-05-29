@@ -66,6 +66,6 @@
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
     "webpack-node-externals": "^1.7.2",
-    "ws": "^7.0.0"
+    "ws": "^7.4.6"
   }
 }
